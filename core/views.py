@@ -4,6 +4,10 @@ from django.http import HttpResponse
 import requests
 import os
 
+import logging
+
+logger = logging.getLogger('general')
+
 
 def normalize(route, msg=''):
     # this is general response from router
@@ -12,7 +16,8 @@ def normalize(route, msg=''):
 
     try:
         error, audio_file, end = msg.split(',')
-    except:
+    except Exception as e:
+        logger.error(route, str(e))
         # if msg structure is not ',,,' then it should be a general message from service, return it intact
         return msg
 
@@ -30,6 +35,7 @@ def route(request, call_state, phone_number, number):
         try:
             route_conf = Route.get_route(number)
         except Route.DoesNotExist:
+            logger.error('route not found. number: %s' % number)
             return HttpResponse(normalize(None, 'error,,'))
 
         # set new record for the incoming phone_number

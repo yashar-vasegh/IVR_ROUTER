@@ -12,13 +12,14 @@ class Route(models.Model):
     sound_folders = models.CharField(max_length=50)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modify = models.DateTimeField(auto_now=True)
+    is_enable = models.BooleanField()
 
     def __unicode__(self):
         return str(self.name)
 
     @classmethod
     def get_route(cls, code):
-        return Route.objects.get(code=code)
+        return Route.objects.get(code=code, is_enable=True)
 
     def get_url(self, call_state, **kwargs):
         if call_state == 'start':
